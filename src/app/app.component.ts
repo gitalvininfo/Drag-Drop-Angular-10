@@ -48,6 +48,7 @@ export class AppComponent {
   ];
 
   onDrop(event: CdkDragDrop<string[]>) {
+    console.warn(event)
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data,
         event.previousIndex,
