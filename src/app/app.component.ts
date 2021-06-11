@@ -74,12 +74,22 @@ export class AppComponent {
 
   dragEnd(event: CdkDragEnd) {
     // event.source.
+    // const { offsetLeft, offsetTop } = event.source.element.nativeElement;
     let x = event.source.getFreeDragPosition().x;
-    let y = event.source.getFreeDragPosition().y
-    this.dragPosition = {x: 201.5, y: 202.25};
+    let y = event.source.getFreeDragPosition().y;
 
-    console.log(event.source.getFreeDragPosition());
-    console.log(event)
+    this.dragPosition = {x:  x, y: y};
+
+
+
+    console.log({
+      c: event.source.element.nativeElement,
+      // offsetLeft: offsetLeft,
+      // offsetTop: offsetTop
+    })
+
+    // console.log(event.source.getFreeDragPosition());
+    // console.log(event)
     // console.log(this.dragElement.nativeElement.getBoundingClientRect());
 
   }
