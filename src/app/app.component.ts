@@ -1,5 +1,6 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import {CdkDragDrop, CdkDragEnd, CdkDragRelease, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import { Component, ElementRef, NgZone, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { CdkDragDrop, CdkDragEnd, CdkDragRelease, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { ResizeEvent } from 'angular-resizable-element';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +9,12 @@ import {CdkDragDrop, CdkDragEnd, CdkDragRelease, moveItemInArray, transferArrayI
 })
 export class AppComponent {
   @ViewChild("dragElement") dragElement: ElementRef;
+  @ViewChildren('resizeBox') resizeBox?: QueryList<ElementRef>;
+
+
+  constructor(private zone: NgZone) {
+
+  }
 
   todos = [
     {
@@ -47,58 +54,112 @@ export class AppComponent {
     }
   ];
 
+  dragPosition;
+  height;
+  width;
+
   onDrop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data,
         event.previousIndex,
         event.currentIndex);
-        console.warn(event); 
+      console.warn(event);
     } else {
       transferArrayItem(event.previousContainer.data,
         event.container.data,
         event.previousIndex, event.currentIndex);
-        console.warn(event); 
+      console.warn(event);
     }
   }
 
-  
-  dragPosition = {x: 0, y: 0};
+
+  ngOnInit(): void {
+    try {
+      const position = JSON.parse(localStorage.getItem('position'));
+      const defaultPosition = { x: 0, y: 0 }
+      this.dragPosition = (position) ? position : defaultPosition;
+    } catch (e) {
+
+    }
+  }
+
+
   onRelease(event: CdkDragRelease) {
-      // console.log(event)
+    // console.log(event)
   }
 
   onDrops(event: CdkDragDrop<string[]>) {
-    console.log(event);
+    // console.log(event);
 
   }
 
   dragEnd(event: CdkDragEnd) {
-    // event.source.
-    // const { offsetLeft, offsetTop } = event.source.element.nativeElement;
-    let x = event.source.getFreeDragPosition().x;
-    let y = event.source.getFreeDragPosition().y;
 
-    this.dragPosition = {x:  x, y: y};
+    this.zone.runOutsideAngular(() => {
+      const { offsetHeight, offsetWidth } = event.source.element.nativeElement;
+      let { x, y } = event.source.getFreeDragPosition();
+      this.dragPosition = { x: x, y: y };
 
+      console.warn('after drag end', this.dragPosition);
 
+      // this.height = offsetHeight;
+      // this.width = offsetWidth;
 
-    console.log({
-      c: event.source.element.nativeElement,
-      // offsetLeft: offsetLeft,
-      // offsetTop: offsetTop
+      // localStorage.setItem("position", JSON.stringify(this.dragPosition));
+
+      // console.log(event);
+
+      // console.log(this.dragElement);
+      // console.log(this.resizeBox);
     })
 
-    // console.log(event.source.getFreeDragPosition());
-    // console.log(event)
-    // console.log(this.dragElement.nativeElement.getBoundingClientRect());
 
   }
 
 
   changePosition() {
-    this.dragPosition = {x: this.dragPosition.x + 50, y: this.dragPosition.y + 50};
+    this.dragPosition = { x: this.dragPosition.x + 50, y: this.dragPosition.y + 50 };
     // console.log(this.dragElement);
     // console.log(this.dragPosition)
   }
+
+
+  public style: object = {};
+
+  validate(event: ResizeEvent): boolean {
+    const MIN_DIMENSIONS_PX: number = 150;
+    // console.log(event)
+    if (
+      event.rectangle.width &&
+      event.rectangle.height &&
+      (event.rectangle.width < MIN_DIMENSIONS_PX ||
+        event.rectangle.height < MIN_DIMENSIONS_PX)
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  onResizeEnd(event: ResizeEvent): void {
+    const current = this.dragPosition;
+    console.log(event);
+    
+    this.style = {
+      // position: 'absolute',
+      // left: `${event.rectangle.left}px`,
+      // top: `${event.rectangle.top}px`,
+      // width: `${event.rectangle.width}px`,
+      // height: `${event.rectangle.height}px`
+    };
+
+    // this.dragPosition = {x: 2, y: current.y};
+
+  }
+
+
+
+
+
+
 
 }

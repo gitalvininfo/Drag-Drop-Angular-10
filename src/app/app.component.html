@@ -3,12 +3,8 @@
   <div class="list-container">
 
     <div class="todo-container column-container">
-      <div class="list"
-           cdkDropList
-           #todoList="cdkDropList"
-           [cdkDropListData]="todos"
-           [cdkDropListConnectedTo]="[doneList]"
-           (cdkDropListDropped)="onDrop($event)">
+      <div class="list" cdkDropList #todoList="cdkDropList" [cdkDropListData]="todos"
+        [cdkDropListConnectedTo]="[doneList]" (cdkDropListDropped)="onDrop($event)">
         <mat-card *ngFor="let todo of todos" cdkDrag>
           <mat-card-header>
             <mat-card-title>{{todo.name}}</mat-card-title>
@@ -19,12 +15,8 @@
     </div>
 
     <div class="done-container column-container">
-      <div class="list"
-           cdkDropList
-           #doneList="cdkDropList"
-           [cdkDropListData]="completed"
-           [cdkDropListConnectedTo]="todoList"
-           (cdkDropListDropped)="onDrop($event)">
+      <div class="list" cdkDropList #doneList="cdkDropList" [cdkDropListData]="completed"
+        [cdkDropListConnectedTo]="todoList" (cdkDropListDropped)="onDrop($event)">
         <mat-card *ngFor="let complete of completed" cdkDrag>
           <mat-card-header>
             <mat-card-title>{{complete.name}}</mat-card-title>
@@ -37,17 +29,41 @@
   </div>
 </div> -->
 
+<!-- (cdkDragReleased)="onRelease($event)" -->
 
-<div class="example-boundary" 
-    CdkDropList
-    (cdkDropListDropped)="onDrops($event)" 
-    >
-  <div class="example-box" cdkDragBoundary=".example-boundary" #dragElement cdkDrag 
-  [cdkDragFreeDragPosition]="dragPosition"
-  (cdkDragEnded)="dragEnd($event)"
-  >
-  <!-- (cdkDragReleased)="onRelease($event)" -->
+
+<!-- CdkDropList -->
+<div class="example-boundary">
+  <div class="example-box" cdkDragBoundary=".example-boundary" #resizeBox #dragElement cdkDrag
+    [cdkDragFreeDragPosition]="dragPosition" (cdkDragEnded)="dragEnd($event)"
+    [ngStyle]="style" mwlResizable [validateResize]="validate" [enableGhostResize]="true"
+    [resizeSnapGrid]="{ left: 1, right: 1 }" (resizeEnd)="onResizeEnd($event)">
 
     Test
+
+    <div class="resize-handle-top" mwlResizeHandle [resizeEdges]="{ top: true }"></div>
+    <div class="resize-handle-left" mwlResizeHandle [resizeEdges]="{ left: true }"></div>
+    <div class="resize-handle-right" mwlResizeHandle [resizeEdges]="{ right: true }"></div>
+    <div class="resize-handle-bottom" mwlResizeHandle [resizeEdges]="{ bottom: true }"></div>
   </div>
 </div>
+
+{{dragPosition | json}}
+
+<p>
+  Height: {{height}}
+</p>
+
+<p>
+  Width: {{width}}
+</p>
+
+
+<!-- <div cdkDrag class="rectangle" [ngStyle]="style" mwlResizable [validateResize]="validate" [enableGhostResize]="true"
+  [resizeSnapGrid]="{ left: 1, right: 1 }" (resizeEnd)="onResizeEnd($event)">
+  Angular Resizable Element
+  <div class="resize-handle-top" mwlResizeHandle [resizeEdges]="{ top: true }"></div>
+  <div class="resize-handle-left" mwlResizeHandle [resizeEdges]="{ left: true }"></div>
+  <div class="resize-handle-right" mwlResizeHandle [resizeEdges]="{ right: true }"></div>
+  <div class="resize-handle-bottom" mwlResizeHandle [resizeEdges]="{ bottom: true }"></div>
+</div> -->
